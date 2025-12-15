@@ -1,0 +1,89 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --chart-1: 12 76% 61%;
+    --chart-2: 173 58% 39%;
+    --chart-3: 197 37% 24%;
+    --chart-4: 43 74% 66%;
+    --chart-5: 27 87% 67%;
+    --sidebar-width: 240px;
+  }
+
+  .dark {
+    --chart-1: 220 70% 50%;
+    --chart-2: 160 60% 45%;
+    --chart-3: 30 80% 55%;
+    --chart-4: 280 65% 60%;
+    --chart-5: 340 75% 55%;
+  }
+}
+
+body {
+  color: #0e1d39;
+}
+
+.fc-toolbar-chunk {
+  display: flex;
+}
+
+.fc-toolbar-title {
+  font-size: 23px !important;
+  font-weight: 500 !important;
+}
+
+.fc .fc-button-primary {
+  background-color: transparent !important;
+  color: #000 !important;
+  border: none !important;
+  text-transform: capitalize !important;
+}
+
+.fc-button-group {
+  border-radius: 8px !important;
+  border: 1px solid #eff1f4 !important;
+  background-color: #eff1f4 !important;
+  text-transform: capitalize !important;
+}
+
+.fc-dayGridMonth-button.fc-button-active,
+.fc-timeGridWeek-button.fc-button-active {
+  border-radius: 8px !important;
+  background-color: #fff !important;
+  border: 1px solid #b6c1ca !important;
+}
+
+.fc .fc-day-today {
+  background-color: #fcebe4 !important;
+}
+.fc-timegrid-slot-label {
+  background-color: #f6f7f9 !important;
+}
+.fc-timegrid-slot-label-cushion {
+  font-size: #14181f !important;
+  font-weight: 400 !important;
+}
+
+.swiper-pagination-bullet .swiper-pagination-bullet-active {
+  background-color: #e9622b !important; /* Tailwind's blue-500 */
+  opacity: 1;
+}
+
+.swiper-pagination-bullet {
+  background-color: #e9622b !important;
+  opacity: 1;
+}
+
+/* Hide increment/decrement buttons in Chrome, Safari, Edge, and Opera */
+.no-arrows::-webkit-outer-spin-button,
+.no-arrows::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Hide increment/decrement buttons in Firefox */
+.no-arrows[type="number"] {
+  -moz-appearance: textfield;
+}
