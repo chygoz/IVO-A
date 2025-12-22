@@ -7,7 +7,7 @@ type QueryProviderProps = {
 };
 
 function QueryProvider({ children }: QueryProviderProps) {
-  const queryClientRef = useRef<any>();
+  const queryClientRef = useRef<any>(null);
   if (!queryClientRef.current) {
     queryClientRef.current = new QueryClient({
       defaultOptions: {
