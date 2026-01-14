@@ -1,4 +1,5 @@
 import { auth } from "@/auth";
+import { getSession } from "next-auth/react";
 
 type FetchAPIProps = {
   form?: boolean;
@@ -10,6 +11,9 @@ type FetchAPIProps = {
   // Add session parameter
   session?: any;
 };
+
+// Helper to detect if we're on the server
+const isServer = typeof window === "undefined";
 
 export async function fetchAPI({
   url,
@@ -23,19 +27,36 @@ export async function fetchAPI({
     // Use provided session or get current session
     let session = providedSession;
     if (!session) {
-      // Check if we're in a prerendering context by trying to access headers
-      try {
-        // Try to access headers to detect if we're in a prerendering context
-        const { headers } = await import("next/headers");
-        // If we can access headers, we're not in a prerendering context
-        session = await auth();
-      } catch (error) {
-        // If we can't access headers or auth fails, we might be in a prerendering context
-        console.warn("Skipping authentication during prerendering:", error);
+      if (isServer) {
+        // Server-side: use auth() from NextAuth
+        try {
+          const { headers } = await import("next/headers");
+          session = await auth();
+        } catch (error) {
+          console.warn("Skipping authentication during prerendering:", error);
+        }
+      } else {
+        // Client-side: use getSession() from next-auth/react
+        try {
+          session = await getSession();
+        } catch (error) {
+          console.warn("Failed to get client session:", error);
+        }
       }
     }
 
-    const BASE_URL = process.env.SERVER_API_URL;
+    // Use NEXT_PUBLIC_SERVER_API_URL for both client and server
+    // SERVER_API_URL is server-only and returns undefined on client-side
+    const BASE_URL =
+      process.env.NEXT_PUBLIC_SERVER_API_URL || process.env.SERVER_API_URL;
+    console.log("[fetchAPI] BASE_URL:", BASE_URL);
+    console.log("[fetchAPI] REQUEST URL:", url);
+    console.log("[fetchAPI] Session:", session);
+    console.log(
+      "[fetchAPI] Access Token:",
+      session?.accessToken ? "Present" : "Missing"
+    );
+    console.log("[fetchAPI] Current Business:", session?.current_business);
     const FULL_PATH = `${BASE_URL}${url}`;
 
     // Add the token to the headers
@@ -48,6 +69,7 @@ export async function fetchAPI({
         ? { "x-admin-key": session.current_business.identifier }
         : {}),
     };
+    console.log("[fetchAPI] Headers being sent:", headers);
 
     const options: RequestInit = {
       method,

@@ -8,15 +8,17 @@ import RecentOrdersSection from "@/components/dashboard/recent-order-section";
 import LoadingDashboard from "@/components/dashboard/dashboard-loading";
 import ErrorBoundaryWrapper from "@/components/error-boundary-wrapper";
 
-export default function DashboardComponent({
+export default async function DashboardComponent({
   searchParams,
 }: {
-  searchParams: { [key: string]: string | string[] | undefined };
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }) {
+  // Await searchParams in Next.js 16
+  const params = await searchParams;
   // Extract timeRange from searchParams or use default
   const timeRange =
-    typeof searchParams.timeRange === "string"
-      ? (searchParams.timeRange as "all" | "12m" | "30d" | "7d" | "24h")
+    typeof params.timeRange === "string"
+      ? (params.timeRange as "all" | "12m" | "30d" | "7d" | "24h")
       : "all"; // Default to 'all'
 
   return (
