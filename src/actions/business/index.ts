@@ -62,14 +62,16 @@ export const getPartners = async (): Promise<{
 export const getMyTransactions = async (): Promise<{
   data: { results: Transaction[] };
 }> => {
-  const res = await fetch(`${CLIENT_URL}/transactions`, {
+  const res = await fetchAPI({
+    url: `${SERVER_URL}/transactions`,
     method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-    },
   });
 
-  return res.json();
+  if (res?.error) {
+    return { data: { results: [] } };
+  }
+
+  return res;
 };
 
 export const getMyMembers = async (): Promise<{
@@ -87,30 +89,29 @@ export const getMyMembers = async (): Promise<{
 export const getMyInvites = async (): Promise<{
   data: { results: Invite[] };
 }> => {
-  const res = await fetch(`${CLIENT_URL}/invites`, {
+  const res = await fetchAPI({
+    url: `${SERVER_URL}/invites`,
     method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-    },
   });
 
-  return res.json();
+  if (res?.error) {
+    return { data: { results: [] } };
+  }
+
+  return res;
 };
 
 export const inviteMember = async (
   emails: string[]
 ): Promise<{ data: Invite }> => {
-  const res = await fetch(`${CLIENT_URL}/invites`, {
+  const res = await fetchAPI({
+    url: `${SERVER_URL}/invites`,
     method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ emails }),
+    body: { emails },
   });
 
-  if (!res.ok) {
-    const errorResponse = await res.json();
-    throw new Error(errorResponse.message || res.statusText);
+  if (res?.error) {
+    throw new Error(res.message || res.details);
   }
 
   return res.json();
@@ -119,55 +120,48 @@ export const inviteMember = async (
 export const resendInvite = async (
   email: string
 ): Promise<{ data: Invite }> => {
-  const res = await fetch(`${CLIENT_URL}/invites/resend`, {
+  const res = await fetchAPI({
+    url: `${SERVER_URL}/invites/resend`,
     method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ email }),
+    body: { email },
   });
 
-  if (!res.ok) {
-    const errorResponse = await res.json();
-    throw new Error(errorResponse.message || res.statusText);
+  if (res?.error) {
+    throw new Error(res.message || res.details);
   }
 
-  return res.json();
+  return res;
 };
 
 export const cancelInvite = async (
   email: string
 ): Promise<{ data: Invite }> => {
-  const res = await fetch(`${CLIENT_URL}/invites/cancel`, {
+  const res = await fetchAPI({
+    url: `${SERVER_URL}/invites/cancel`,
     method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ email }),
+    body: { email },
   });
 
-  if (!res.ok) {
-    const errorResponse = await res.json();
-    throw new Error(errorResponse.message || res.statusText);
+  if (res?.error) {
+    throw new Error(res.message || res.details);
   }
 
-  return res.json();
+  return res;
 };
 
 export const removePartnerUser = async (
   userId: string
 ): Promise<any> => {
   const res = await fetchAPI({
-    url: `${CLIENT_URL}/members/${userId}`,
-    method: "delete",
+    url: `${SERVER_URL}/members/${userId}`,
+    method: "DELETE",
   });
 
-  if (!res.ok) {
-    const errorResponse = await res.json();
-    throw new Error(errorResponse.message || res.statusText);
+  if (res?.error) {
+    throw new Error(res.message || res.details);
   }
 
-  return res.json();
+  return res;
 };
 
 export const changePartnerUserRole = async (
@@ -175,15 +169,14 @@ export const changePartnerUserRole = async (
   role: string
 ): Promise<any> => {
   const res = await fetchAPI({
-    url: `${CLIENT_URL}/members/${userId}`,
+    url: `${SERVER_URL}/members/${userId}`,
     method: "PUT",
     body: { role }
   });
 
-  if (!res.ok) {
-    const errorResponse = await res.json();
-    throw new Error(errorResponse.message || res.statusText);
+  if (res?.error) {
+    throw new Error(res.message || res.details);
   }
 
-  return res.json();
+  return res;
 };

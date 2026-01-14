@@ -7,10 +7,10 @@ export const metadata: Metadata = {
     "IVO Admin dashboard monitoring sales, orders, customers, and products",
 };
 
-export default function DashboardPage({
+export default async function DashboardPage({
   searchParams,
 }: {
-  searchParams: { [key: string]: string | string[] | undefined };
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }) {
   return <DashboardComponent searchParams={searchParams} />;
 }

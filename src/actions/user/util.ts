@@ -1,4 +1,4 @@
-export const URL = `${process.env.NEXT_PUBLIC_SERVER_API_URL}/api/v1/users`;
+export const getURL = () => `${process.env.NEXT_PUBLIC_SERVER_API_URL}/api/v1/users`;
 
 export interface IUser {
   _id: string;
