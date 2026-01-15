@@ -1,6 +1,6 @@
 import { TimeRange } from "@/components/dashboard/types";
 import { fetchAPI } from "../config";
-import { URL, CLIENT_URL, IAnalyticCategory, IAnalyticPeriod } from "./util";
+import { CLIENT_URL } from "./util";
 
 type Query = {
   timeRange: TimeRange;
