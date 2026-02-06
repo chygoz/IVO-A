@@ -1,9 +1,18 @@
 import { getSubmissions } from "@/actions/submissions";
 import RequestComponent from "@/components/resellers/requests";
+import AccessDenied from "@/components/ui/access-denied";
 import React from "react";
 
 async function RequestPage() {
   const response = await getSubmissions("pending");
+  if (response.error) {
+    return (
+      <AccessDenied
+        returnTo="/dashboard"
+        message={response.error}
+      />
+    );
+  }
 
   // Handle case where response.data might be undefined
   const requests = response.data?.results || [];

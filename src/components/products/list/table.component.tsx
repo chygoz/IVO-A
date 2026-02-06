@@ -69,13 +69,17 @@ function ProductTable({ products, metadata, type }: ProductTableProps) {
                   <TableCell className="">{product.code}</TableCell>
                   <TableCell className="capitalize">
                     <div className="flex items-center gap-4">
-                      <Image
-                        className="w-[30px] h-[30px] rounded-md object-cover"
-                        src={product?.variants[0]?.gallery[0]?.url || ""}
-                        width={800}
-                        height={800}
-                        alt="img"
-                      />
+                      {product?.variants?.[0]?.gallery?.[0]?.url ? (
+                        <Image
+                          className="w-[30px] h-[30px] rounded-md object-cover"
+                          src={product.variants[0].gallery[0].url}
+                          width={800}
+                          height={800}
+                          alt="img"
+                        />
+                      ) : (
+                        <div className="w-[30px] h-[30px] rounded-md bg-muted" />
+                      )}
                       <span>{product.name}</span>
                     </div>
                   </TableCell>
