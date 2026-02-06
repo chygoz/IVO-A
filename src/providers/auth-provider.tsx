@@ -3,7 +3,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import { useSession } from "next-auth/react";
 import { AuthContext, AuthUser } from "@/contexts/auth.context";
 import { usePathname } from "next/navigation";
-import { findMatchingRoute } from "@/lib/utils";
+import { findMatchingRoute, normalizeRole } from "@/lib/utils";
 import AccessDenied from "@/components/ui/access-denied";
 
 interface PartnerProviderProps {
@@ -37,7 +37,7 @@ function AuthProvider({ children }: PartnerProviderProps) {
     setAuth(getAuthState(session));
   }, [session]);
 
-  const role = session?.current_business?.role || "";
+  const role = normalizeRole(session?.current_business?.role || "");
   const route = findMatchingRoute(pathname);
   const hasAccess = useMemo(() => {
     if (!route) {
@@ -46,6 +46,10 @@ function AuthProvider({ children }: PartnerProviderProps) {
 
     if (!role) {
       return route.actors.includes("all");
+    }
+
+    if (role === "admin" || role === "owner") {
+      return true;
     }
 
     return route.actors.includes(role) || route.actors.includes("all");

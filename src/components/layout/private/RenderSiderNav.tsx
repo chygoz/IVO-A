@@ -5,7 +5,7 @@ import { navigation } from "../navigation";
 import { usePathname } from "next/navigation";
 import { Session } from "next-auth";
 import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
+import { cn, normalizeRole } from "@/lib/utils";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Separator } from "@/components/ui/separator";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -19,7 +19,7 @@ type RenderSideNavProps = {
 
 function RenderSideNav({ session, color, closeModal }: RenderSideNavProps) {
   const pathname = usePathname();
-  const role = session?.current_business?.role || ""
+  const role = normalizeRole(session?.current_business?.role || "");
   const filteredNavigationElements = useMemo(() => {
     return navigation
       .map((navItem) => {

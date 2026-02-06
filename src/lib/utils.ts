@@ -402,6 +402,19 @@ export function downloadBase64Content(
   document.body.removeChild(a);
   URL.revokeObjectURL(url);
 }
+
+export function normalizeRole(role: string): string {
+  const normalized = role.toLowerCase().replace(/[\s_]+/g, "-");
+
+  if (normalized.includes("admin")) return "admin";
+  if (normalized.includes("owner")) return "owner";
+  if (normalized.includes("product")) return "product";
+  if (normalized.includes("order")) return "order";
+  if (normalized.includes("financial")) return "financial";
+  if (normalized.includes("communication")) return "communications";
+
+  return normalized;
+}
 type route = {
   href: string,
   name: string,

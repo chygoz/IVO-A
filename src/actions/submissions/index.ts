@@ -5,10 +5,18 @@ export const getSubmissions = async (
   status?: string
 ): Promise<{
   data: { results: Submission[] };
+  error?: string;
 }> => {
   const res = await fetchAPI({
     url: `${CLIENT_URL}${status ? `?status=${status}` : ""}`,
   });
+
+  if (res?.error) {
+    return {
+      data: { results: [] },
+      error: res.details,
+    };
+  }
 
   return res;
 };
