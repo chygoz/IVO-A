@@ -7,7 +7,14 @@ import { Skeleton } from "@/components/ui/skeleton";
 import NotificationBell from "@/components/notification/notification-bell";
 
 async function Navbar() {
-  const session = await auth();
+  let session: any = null;
+  try {
+    const { headers } = await import("next/headers");
+    headers();
+    session = await auth();
+  } catch (error) {
+    console.warn("Skipping authentication during prerendering:", error);
+  }
   return (
     <Suspense
       fallback={
