@@ -26,7 +26,14 @@ const links = [
 ];
 
 async function Navbar() {
-  const session = await auth();
+  let session: any = null;
+  try {
+    const { headers } = await import("next/headers");
+    headers();
+    session = await auth();
+  } catch (error) {
+    console.warn("Skipping authentication during prerendering:", error);
+  }
   return (
     <div className="fixed inset-x-0 top-[36px] z-[11] px-4 sm:px-0">
       <div className=" bg-white max-w-7xl mx-auto w-full px-8 rounded-[60px] shadow-md">

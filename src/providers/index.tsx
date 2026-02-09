@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Suspense } from "react";
 import QueryProvider from "./tansack.provider";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import AuthProvider from "./auth-provider";
@@ -15,13 +15,15 @@ function Providers({ children, serverUrl }: ProvidersProps) {
   return (
     <SessionProvider>
       <QueryProvider>
-        <AuthProvider>
-          <NotificationProvider apiUrl={serverUrl}>
-            <ToastProvider>
-              <TooltipProvider>{children}</TooltipProvider>
-            </ToastProvider>
-          </NotificationProvider>
-        </AuthProvider>
+        <Suspense fallback={null}>
+          <AuthProvider>
+            <NotificationProvider apiUrl={serverUrl}>
+              <ToastProvider>
+                <TooltipProvider>{children}</TooltipProvider>
+              </ToastProvider>
+            </NotificationProvider>
+          </AuthProvider>
+        </Suspense>
       </QueryProvider>
     </SessionProvider>
   );
