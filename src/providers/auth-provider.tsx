@@ -37,15 +37,24 @@ function AuthProvider({ children }: PartnerProviderProps) {
     setAuth(getAuthState(session));
   }, [session]);
 
-  const role = normalizeRole(session?.current_business?.role || "");
+  const role = normalizeRole(
+    session?.current_business?.role ||
+      session?.user?.business?.role ||
+      (session as any)?.user?.role ||
+      ""
+  );
   const route = findMatchingRoute(pathname);
   const hasAccess = useMemo(() => {
     if (!route) {
       return true;
     }
 
+    if (status !== "authenticated") {
+      return true;
+    }
+
     if (!role) {
-      return route.actors.includes("all");
+      return true;
     }
 
     if (role === "admin" || role === "owner") {
@@ -53,7 +62,7 @@ function AuthProvider({ children }: PartnerProviderProps) {
     }
 
     return route.actors.includes(role) || route.actors.includes("all");
-  }, [route, role]);
+  }, [route, role, status, session]);
 
   if (!hasAccess) {
     return (
