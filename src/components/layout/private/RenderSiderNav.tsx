@@ -21,6 +21,9 @@ function RenderSideNav({ session, color, closeModal }: RenderSideNavProps) {
   const pathname = usePathname();
   const role = normalizeRole(session?.current_business?.role || "");
   const filteredNavigationElements = useMemo(() => {
+    if (!role) {
+      return navigation.filter((navItem) => navItem.children.length > 0);
+    }
     return navigation
       .map((navItem) => {
         const children = navItem.children.filter((child) =>

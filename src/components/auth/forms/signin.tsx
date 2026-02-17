@@ -6,11 +6,12 @@ import * as zod from "zod";
 import { toast } from "sonner";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm, Controller } from "react-hook-form";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { doCredentialLogin } from "@/actions/login";
 import ButtonText from "@/components/ui/buttonText";
 import { PasswordInput } from "@/components/ui/password-input";
 import SendOTP from "../send.otp";
+import { useSession } from "next-auth/react";
 
 type SigninFormProps = {
   cb?: () => void;
@@ -19,7 +20,14 @@ type SigninFormProps = {
 function SigninForm({ cb }: SigninFormProps) {
   const [error, setError] = React.useState("");
   const pathname = usePathname();
-  const defaultRedirect = pathname === "/auth/signin" ? "/dashboard" : pathname;
+  const router = useRouter();
+  const { status, update } = useSession();
+  const defaultRedirect =
+    pathname === "/auth/signin"
+      ? "/dashboard"
+      : pathname.startsWith("/dashboard")
+        ? `${pathname}?login=1`
+        : pathname;
   const [isLoading, setIsLoading] = React.useState(false);
   const signinSchema = zod.object({
     email: zod.string().email(),
@@ -52,6 +60,18 @@ function SigninForm({ cb }: SigninFormProps) {
       setError(result.error || "Something went wrong");
     } else {
       toast.success("Logged in successfully");
+      try {
+        const refreshedSession = await update();
+        if (!refreshedSession) {
+          window.location.assign(defaultRedirect);
+          return;
+        }
+        router.replace(defaultRedirect);
+        router.refresh();
+      } catch {
+        window.location.assign(defaultRedirect);
+        return;
+      }
       if (cb && typeof cb === "function") {
         cb();
       }

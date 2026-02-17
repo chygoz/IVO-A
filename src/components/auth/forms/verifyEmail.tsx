@@ -20,13 +20,14 @@ import {
   InputOTPSlot,
 } from "@/components/ui/input-otp";
 import React, { useEffect, useState } from "react";
-import { notFound, usePathname } from "next/navigation";
+import { notFound, usePathname, useRouter } from "next/navigation";
 import { doCredentialLogin } from "@/actions/login";
 import { toast } from "sonner";
 import ButtonText from "@/components/ui/buttonText";
 import ErrorAlert from "@/components/ui/error-alert";
 import { useMutation } from "@tanstack/react-query";
 import { sendVerification } from "@/actions/send.verification";
+import { useSession } from "next-auth/react";
 
 const FormSchema = z.object({
   pin: z.string().min(6, {
@@ -42,6 +43,8 @@ export function VerifyInputOTP({ code }: VerifyInputOTPProps) {
   const [error, setError] = React.useState("");
   const [timer, setTimer] = useState(0);
   const pathname = usePathname();
+  const router = useRouter();
+  const { status, update } = useSession();
   const defaultRedirect =
     pathname === "/auth/verify/otp" ? "/dashboard" : pathname;
   const [isLoading, setIsLoading] = React.useState(false);
@@ -119,6 +122,18 @@ export function VerifyInputOTP({ code }: VerifyInputOTPProps) {
       setError(result?.error || "Something went wrong");
     } else {
       toast.success("Email verified successfully");
+      try {
+        const refreshedSession = await update();
+        if (!refreshedSession) {
+          window.location.assign(defaultRedirect);
+          return;
+        }
+        router.replace(defaultRedirect);
+        router.refresh();
+      } catch {
+        window.location.assign(defaultRedirect);
+        return;
+      }
     }
     setIsLoading(false);
   }
